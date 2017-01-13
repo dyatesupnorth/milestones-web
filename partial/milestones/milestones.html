@@ -1,0 +1,113 @@
+<form class="form-inline" role="form">
+    <div class="form-group">
+        <label for="sort">Sort By:</label>
+        <select id="sort" ng-model="sortExpression" class="form-control">
+            <option value="created_at">Date</option>
+            <option value="percentage">Percentage Complete</option>
+        </select>
+    </div>
+
+    <!--<div class="form-group">-->
+    <!--<label for="category">Category:</label>-->
+    <!--<select id="category" ng-model="categorySort" class="form-control">-->
+    <!--<option data-ng-repeat="category in categories" value="{{category.category_name}}">{{category.category_name}}</option>-->
+    <!--</select>-->
+    <!--</div>-->
+
+    <button type="submit" class="btn btn-default pull-right " data-ng-click="showAddGoal = !showAddGoal">Add Goal
+    </button>
+</form>
+<hr>
+
+
+<div class="row" data-ng-repeat="category in categories" masonry>
+    <div class="col-sm-12" data-ng-show="showAddGoal">
+        <div class="input-group" >
+            <input type="text" class="form-control" placeholder="Add a new goal..."
+                   data-ng-model="category.newGoalName">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" data-ng-click="addGoal(category)">Add</button>
+                      </span>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class=" masonry-brick col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3"
+         data-ng-repeat="goal in category.goals | orderBy:sortExpression | filter:search">
+        <div class="box" ng-class="goal.is_complete === '1' ? 'box-success' : 'box-primary'">
+
+            <div class="box-header ui-sortable-handle" style="cursor: move;">
+                <i class="ion ion-clipboard"></i>
+
+                <h3 class="box-title">{{goal.goal_name}}
+                    <small>{{category.category_name}}</small>
+                </h3>
+                <div class="box-tools pull-right">
+                    <!--<ul class="pagination pagination-sm inline">-->
+                    <!--<li><a href="#">«</a></li>-->
+                    <!--<li><a href="#">1</a></li>-->
+                    <!--<li><a href="#">2</a></li>-->
+                    <!--<li><a href="#">3</a></li>-->
+                    <!--<li><a href="#">»</a></li>-->
+                    <!--</ul>-->
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <uib-progressbar class="progress-striped active" value="goal.percentage"
+                                 type="{{goal.progressType}}">
+                    <!--{{goal.percentage | number:0}}%-->
+                </uib-progressbar>
+                <ul class="todo-list ui-sortable">
+                    <li ng-class="milestone.is_complete ? 'done' : ''" data-ng-repeat="milestone in goal.milestones">
+                        <!-- drag handle -->
+                      <span class="handle ui-sortable-handle">
+                        <i class="fa fa-ellipsis-v"></i>
+                        <i class="fa fa-ellipsis-v"></i>
+                      </span>
+                        <!-- checkbox -->
+                        <a href data-ng-click="toggleMilestone(goal, milestone)">
+                            <i class="fa"
+                               ng-class="milestone.is_complete ? 'fa-check-square-o' : 'fa-square-o'"></i>
+
+                        </a>
+                        <!-- todo text -->
+                        <span class="text">{{milestone.milestone_name}}</span>
+                        <!-- Emphasis label -->
+                        <small class="label label-danger"><i class="fa fa-clock-o"></i> 2 mins</small>
+                        <!-- General tools such as edit or delete-->
+                        <div class="tools">
+                            <i class="fa fa-edit"></i>
+                            <button class="btn btn-xs btn-danger" data-ng-click="deleteMilestone(goal, milestone)">
+                                <span class="fa fa-trash-o"></span>
+                            </button>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix no-border">
+
+                <li data-ng-show="showAddMilestone" class="list-group-item">
+                    <div class="input-group" style="margin-top:20px;">
+                        <input type="text" class="form-control" placeholder="Add a new milestone..."
+                               data-ng-model="goal.newMilestoneName">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" data-ng-click="addMilestone(goal)">Add</button>
+                      </span>
+                    </div>
+                </li>
+
+                <span class="footer-date pull-left text-muted">Added {{goal.created_at | date:'MM/dd/yyyy'}}</span>
+                <button class="btn btn-default pull-right" data-ng-click="showAddMilestone = !showAddMilestone"><i
+                        class="fa fa-plus"></i> Add Milestone
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
